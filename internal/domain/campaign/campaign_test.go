@@ -7,18 +7,21 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+var (
+	name     = "Test campaign"
+	content  = "Body Content"
+	contacts = []string{"t1@test.com", "t2@test.com"}
+)
+
 func Test_NewCampaign_Create(t *testing.T) {
 
 	// Three A's: Arrange, Act, Assert
 
 	// Arrange: setup variables and input
 	assert := assert.New(t)
-	name := "New Campaign"
-	content := "Body Campaign"
-	contacts := []string{"email1@campaign.com", "email2@campaign.com"}
 
 	// Act: execute the code to test
-	campaign := NewCampaign(name, content, contacts)
+	campaign, _ := NewCampaign(name, content, contacts)
 
 	// Assert: check the output
 	assert.NotNil(campaign)
@@ -32,25 +35,46 @@ func Test_NewCampaign_Create(t *testing.T) {
 func Test_NewCampaign_IDIsNotNill(t *testing.T) {
 
 	assert := assert.New(t)
-	name := "ID is Not Nil"
-	content := "Body Content"
-	contacts := []string{"t1@test.com", "t2@test.com"}
 
-	campaign := NewCampaign(name, content, contacts)
+	campaign, _ := NewCampaign(name, content, contacts)
 
 	assert.NotNil(campaign.ID)
 }
 
-func Test_NewCampaign_CreateOnIsNotNill(t *testing.T) {
+func Test_NewCampaign_CreateOnMustBeNow(t *testing.T) {
 
 	assert := assert.New(t)
-	name := "CreateOn is Not Nil"
-	content := "Body Content"
-	contacts := []string{"t1@test.com", "t2@test.com"}
-	now := time.Now().Add(-time.Minute)
 
-	campaign := NewCampaign(name, content, contacts)
+	now := time.Now().Add(-time.Minute)
+	campaign, _ := NewCampaign(name, content, contacts)
 
 	assert.NotNil(campaign.CreateOn)
 	assert.Greater(campaign.CreateOn, now)
+}
+
+func Test_NewCampaign_MustValidateName(t *testing.T) {
+
+	assert := assert.New(t)
+
+	_, err := NewCampaign("", content, contacts)
+
+	assert.Equal("name is required", err.Error())
+}
+
+func Test_NewCampaign_MustValidateContent(t *testing.T) {
+
+	assert := assert.New(t)
+
+	_, err := NewCampaign(name, "", contacts)
+
+	assert.Equal("content is required", err.Error())
+}
+
+func Test_NewCampaign_MustValidateContacts(t *testing.T) {
+
+	assert := assert.New(t)
+
+	_, err := NewCampaign(name, content, []string{})
+
+	assert.Equal("contacts is required", err.Error())
 }
