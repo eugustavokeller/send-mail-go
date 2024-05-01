@@ -3,7 +3,7 @@ package campaign
 import (
 	"time"
 
-	"github.com/google/uuid"
+	"github.com/rs/xid"
 )
 
 type Contact struct {
@@ -26,7 +26,7 @@ func NewCampaign(name string, content string, emails []string) *Campaign {
 	}
 
 	return &Campaign{
-		ID:       uuid.New().String(),
+		ID:       xid.New().String(),
 		Name:     name,
 		CreateOn: time.Now(),
 		Content:  content,
